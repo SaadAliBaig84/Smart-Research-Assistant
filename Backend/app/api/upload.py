@@ -13,9 +13,12 @@ async def upload_file(file: UploadFile = File(...), email:str  = Form(...)):
 
     with open(file_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
+    print(f"Saved uploaded file to: {file_path}")
+    print("File size (bytes):", os.path.getsize(file_path))
 
     try:
-        process_pdf(file_path=
+        
+        await process_pdf(file_path=
                     file_path, email=email)
         return {"message":"Pdf processed and embeddings uploaded to supabase."}
     

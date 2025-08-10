@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/app/core/supabase/client";
 import { useRouter } from "next/navigation";
-import { BrainCircuit, Menu, Paperclip, Send } from "lucide-react";
+import { BrainCircuit, Loader, Menu, Paperclip, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [messages, setMessages] = useState<
     { role: "user" | "assistant"; content: string }[]
   >([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -47,7 +48,7 @@ export default function DashboardPage() {
 
   const handleSend = async () => {
     if (!message && !pdfFile) return;
-
+    setLoading(true);
     try {
       // Upload PDF if available
       if (pdfFile) {
@@ -101,7 +102,10 @@ export default function DashboardPage() {
         console.log(response);
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: response.answer },
+          {
+            role: "assistant",
+            content: response.answer?.content || String(response.answer),
+          },
         ]);
         setMessage("");
       }
@@ -109,6 +113,8 @@ export default function DashboardPage() {
       // Optionally show message in UI
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,8 +234,14 @@ export default function DashboardPage() {
                 type="submit"
                 className="bg-[#F8B55F] text-[#4a2574] hover:bg-white"
               >
-                <Send className="w-4 h-4 mr-1" />
-                Send
+                {loading ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-1" />
+                    Send
+                  </>
+                )}
               </Button>
             </div>
           </form>

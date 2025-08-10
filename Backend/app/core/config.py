@@ -10,5 +10,10 @@ class Config:
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "your-groq-api-key")
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "your-google-api-key")
     TOGETHER_API_KEY: str = os.getenv("TOGETHER_API_KEY", "your-together-api-key")
+    TOGETHER_URL: str = os.getenv("TOGETHER_URL","")
 
 config = Config()
+
+# Initialize Supabase client
+
+
